@@ -17,8 +17,18 @@ const run = async () => {
         await client.connect();
         const productCollection = client.db('moontech').collection('product');
         app.get('/product', async (req, res) => {
-            const project = await productCollection.find().toArray();
-            res.send(project);
+            const product = await productCollection.find({}).toArray();
+            res.send(product);
+        });
+        app.post('/product', async (req, res) => {
+            const body = req.body;
+            const result = await productCollection.insertOne(body);
+            res.send(result);
+        });
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await productCollection.deleteOne({ _id: ObjectId(id) });
+            res.send(result);
         });
     }
     finally { }
@@ -26,7 +36,7 @@ const run = async () => {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('starting');
+    res.send('Hello World !');
 });
 
 app.listen(port, () => console.log('Listing to port', port))
